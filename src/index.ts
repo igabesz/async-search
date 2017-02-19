@@ -1,29 +1,85 @@
+export class SearchMaster {
+	private worker: Worker;
+	private isSearching = false;
+	private cancelled = false;
+	private nextSearch: string;
+	private searchResultsCb: (results: (number | string)[]) => any;
+
+	/** Subscribe for this to receive search results */
+	constructor(id: string, searchResultsCb: (results: (number | string)[]) => any) {
+		let mainScript = createMainScript(id);
+		console.log(mainScript);
+		let blob = new Blob([mainScript], { type: 'application/javascript' });
+		let url = URL.createObjectURL(blob);
+		this.worker = new Worker(url);
+		this.worker.onmessage = (event) => this.onSearchResults(event.data);
+		this.searchResultsCb = searchResultsCb;
+	}
+
+	initialize(items: SearchItem[]) {
+		this.worker.postMessage(<InitializeMessage>{ type: 'initialize', items });
+	}
+
+	search(text: string) {
+		this.cancelled = false;
+		if (this.isSearching) {
+			this.nextSearch = text;
+		}
+		else {
+			this.sendSearch(text);
+		}
+	}
+
+	cancel() {
+		this.cancelled = true;
+		this.nextSearch = undefined;
+	}
+
+	private sendSearch(text: string) {
+		this.isSearching = true;
+		this.worker.postMessage(<SearchMessage>{ type: 'search', text });
+	}
+
+	private onSearchResults(result: SearchResultMessage) {
+		this.isSearching = false;
+		if (this.cancelled) return;
+		// Now the results are important
+		this.searchResultsCb(result.ids);
+		if (this.nextSearch) {
+			this.sendSearch(this.nextSearch);
+			this.nextSearch = undefined;
+		}
+	}
+
+}
+
+
 export interface SearchItem {
 	id: string | number;
 	props: string[];
 }
 
 /** Initializing search data set from window thread */
-export interface InitializeMessage {
+interface InitializeMessage {
 	type: 'initialize';
 	items: SearchItem[];
 }
 
 /** Search command from window thread */
-export interface SearchMessage {
+interface SearchMessage {
 	type: 'search';
 	text: string;
 }
 
 /** Results of a search to window thread */
-export interface SearchResultMessage {
+interface SearchResultMessage {
 	type: 'search-result';
 	ids: (string | number)[];
 }
 
 
 /** Create a blob from this to call the service worker */
-export function createMainScript(id: string) {
+function createMainScript(id: string) {
 	return `
 	${removeAccents.toString()}
 	${SearchWorker.toString()}\n` +

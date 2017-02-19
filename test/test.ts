@@ -1,4 +1,4 @@
-import { SearchMaster, SearchItem } from '../lib/SearchMaster';
+import { SearchMaster, SearchItem } from '../lib/index';
 var assert = chai.assert;
 
 let master: SearchMaster;
