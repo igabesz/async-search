@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "umd",
+    "newLine": "LF",
+    "lib": ["es5", "dom", "es2015.promise"]
+  }
+}
