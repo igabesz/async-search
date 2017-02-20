@@ -8,7 +8,6 @@ export class SearchMaster {
 	/** Subscribe for this to receive search results */
 	constructor(id: string, searchResultsCb: (results: (number | string)[]) => any) {
 		let mainScript = createMainScript(id);
-		console.log(mainScript);
 		let blob = new Blob([mainScript], { type: 'application/javascript' });
 		let url = URL.createObjectURL(blob);
 		this.worker = new Worker(url);

@@ -1,6 +1,6 @@
 {
   "name": "async-search",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Search module for browsers using Web Workers",
   "main": "lib/SearchMaster.js",
   "types": "lib/SearchMaster.d.ts",
