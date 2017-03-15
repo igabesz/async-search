@@ -2,8 +2,8 @@
   "name": "async-search",
   "version": "0.0.3",
   "description": "Search module for browsers using Web Workers",
-  "main": "lib/SearchMaster.js",
-  "types": "lib/SearchMaster.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git@github.com:igabesz/async-search.git"
